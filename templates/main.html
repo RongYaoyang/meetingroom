@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css ">
+    <link rel="stylesheet" href="/static/fonts/glyphicons-halflings-regular.svg " type="text/xml">
+    <link rel="stylesheet" href="/static/css/bootstrap-datetimepicker.min.css ">
+    <script src="/static/jquery-3.2.1.min.js"></script>
+    <script src="/static/jquery.cookie.min.js "></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/bootstrap-datetimepicker.min.js "></script>
+    <style>
+        .hide{
+            display: none;
+        }
+        .td{
+            background-color: #8a6d3b;
+        }
+        .tdd{
+            background-color: #2aabd2;
+        }
+        .ttd{
+            background-color: #4cae4c;
+        }
+    </style>
+</head>
+<body>
+<h1>你好：<h2>{{ user.user }}</h2></h1>
+<div>
+    {% csrf_token %}
+    <input type="date" id="date">
+    <input type="button" id="button" value="提交">
+</div>
+<table border="1">
+    <thead>
+    <tr>
+        <td>会议室</td>
+        {% for foo in time %}
+            <td head='{{ forloop.counter }}'>{{ foo.title }}</td>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for foo in talkrooms %}
+        <tr>
+            <td>{{ foo.title }}</td>
+        {% for ti in time %}
+            {% for ot in order_time %}
+                    {% if ot.talkroom__id == foo.id and ti.title == ot.time %}
+                        <td class="td" inhead="0">{{ ot.user__name }}</td>
+                    {% endif %}
+            {% endfor %}
+            <td inhead="{{ forloop.counter }}">空</td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div class="hide" data="" id="data"></div>
+
+<!--选择日期-->
+<script>
+    $('#date').change(function () {
+        console.log($(this).val())
+    })
+</script>
+
+<!--默认今天-->
+<script>
+    var now=new Date();
+    var day = ("0" + now.getDate()).slice(-2);
+    var month = ("0" + (now.getMonth() + 1)).slice(-2);
+    var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
+    $("#date").attr('value',today);
+{#    console.log(today)#}
+</script>
+<!--选择日期后-->
+<script>
+    //27
+    var html = location.href;
+    if (html.length> 27){
+        var date = html.slice(-10);
+        $('#date').val(date)
+    }
+</script>
+<!--处理多余td-->
+<script>
+    $('.td').each(function () {
+        $(this).next().remove()
+    })
+</script>
+<!---->
+<script>
+    $('tbody td').each(function () {
+{#        console.log($(this).html());#}
+                if($(this).hasClass('td')){
+                    console.log($(this).next().attr('inhead'));
+                    if($(this).next().attr('inhead') === '2'){
+                        $(this).attr('inhead','1')
+                    }
+                    else {
+                    $(this).attr('inhead',parseInt($(this).prev().attr('inhead'))+1)}
+                }})
+</script>
+<!--点击变色选中-->
+<script>
+    $('td').on('click',function () {
+        if($('h2').html() === $(this).html() || $(this).html() === '空'){
+            if($(this).html() === '空'){
+                $(this).toggleClass('tdd');
+                $(this).siblings().removeClass('tdd');
+                $(this).parent().siblings().children().removeClass('tdd');
+                $(this).siblings().removeClass('ttd');
+                $(this).parent().siblings().children().removeClass('ttd')
+            }
+            else{
+                $(this).toggleClass('ttd');
+                $(this).siblings().removeClass('ttd');
+                $(this).parent().siblings().children().removeClass('ttd');
+                $(this).siblings().removeClass('tdd');
+                $(this).parent().siblings().children().removeClass('tdd')
+            }
+
+
+            var inhead = $(this).attr('inhead');
+            var date = $('#date').val();
+            $('thead td').each(function () {
+                if($(this).hasClass('td')){
+                    console.log('td');
+                    $(this).attr('inhead',$(this).prev().attr('inhead'))
+                }
+{#                console.log($(this).attr('head'),inhead);#}
+                if($(this).attr('head') === inhead){
+
+                    time=$(this).html();
+{#                    console.log(time)#}
+                }
+            });
+            var data = {'talkroom':$(this).parent().children().html(),
+                        'time':time,'date':date,'user':$('h2').html()};
+            $('#data').attr('data',JSON.stringify(data));
+            console.log(data['talkroom'],data['time'],data['date'],data['user'])
+        }
+        else {
+            alert('无权更改他人预定')
+        }
+    })
+</script>
+<!--ajax改变日期时显示当前日期预定信息-->
+<script>
+    $('#date').change(function () {
+        $.ajax({
+            url:'/main/',
+            type:'get',
+            data:{
+                'date':$('#date').val()
+            },
+            success:function (data) {
+                console.log(data);
+                location.href=data
+            }
+        })
+    })
+</script>
+<!--ajax向后台提交数据-->
+<script>
+    $('#button').click(function () {
+        $.ajax({
+            url:'/main/',
+            type:'post',
+            headers:{"X-CSRFToken":$.cookie('csrftoken')},
+            data:JSON.stringify($('#data').attr('data')),
+            contentType:'json',
+            success:function (data) {
+{#                console.log(data);#}
+                location.href=data
+            }
+
+        })
+    })
+</script>
+</body>
+</html>
