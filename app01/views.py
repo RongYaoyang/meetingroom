@@ -55,3 +55,21 @@ def index(request,date=None):
                                                                          'user__name')
         return render(request,'main.html',{'time':time,'order_time':ordered_time,
                                            'talkrooms':talkrooms,'user':user_status})
+
+
+def user(request, user=None):
+    # print(user)
+    name = request.session.get('user')
+    if request.method == 'GET':
+        if not user:
+            # print('1')
+            return HttpResponse('<h1>404 NOT FOUND</h1>')
+        user_obj = models.User.objects.filter(name=user).first()
+        if user_obj:
+            # print('2')
+            user_order = models.User.objects.filter(name=user).values('user_date__date','user_date__time','user_date__talkroom__title').order_by('user_date__date','user_date__time')
+            return render(request,'user_order.html', {'user_order':user_order,'user':name})
+        else:
+            return HttpResponse('<h1>404 NOT FOUND</h1>')
+    else:
+        return HttpResponse('<h1>404 NOT FOUND</h1>')

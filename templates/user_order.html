@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+</head>
+<body>
+<h1>{{ user.user }}</h1>
+<ul>
+    {% for foo in user_order %}
+        <li>年月日:{{ foo.user_date__date }}时间:{{ foo.user_date__time }}会议室:{{ foo.user_date__talkroom__title }}</li>
+    {% endfor %}
+
+</ul>
+</body>
+</html>
