@@ -5,14 +5,37 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Title</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css ">
 </head>
 <body>
-<h1>{{ user.user }}</h1>
-<ul>
-    {% for foo in user_order %}
-        <li>年月日:{{ foo.user_date__date }}时间:{{ foo.user_date__time }}会议室:{{ foo.user_date__talkroom__title }}</li>
-    {% endfor %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <h1>{{ user.user }}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <table class="table table-bordered table-responsive table-striped table-hover">
+    <thead>
+            <th>预定日期</th>
+            <th>预定时间</th>
+            <th>预定位置</th>
+    </thead>
+    <tbody>
+        {% for foo in user_order %}
+            <tr>
+                <td>{{ foo.user_date__date }}</td>
+            <td>{{ foo.user_date__time }}</td>
+            <td>{{ foo.user_date__talkroom__title }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+        </div>
+    </div>
+</div>
 
-</ul>
+
 </body>
 </html>

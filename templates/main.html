@@ -13,52 +13,76 @@
     <script src="/static/js/bootstrap.js"></script>
     <script src="/static/js/bootstrap-datetimepicker.min.js "></script>
     <style>
-        .hide{
+        .hide {
             display: none;
         }
-        .td{
+
+        .td {
             background-color: #8a6d3b;
         }
-        .tdd{
+
+        .tdd {
             background-color: #2aabd2;
         }
-        .ttd{
+
+        .ttd {
             background-color: #4cae4c;
         }
     </style>
 </head>
 <body>
-<h1>你好：<h2>{{ user.user }}</h2></h1>
-<div>
-    {% csrf_token %}
-    <input type="date" id="date">
-    <input type="button" id="button" value="提交">
-</div>
-<table border="1">
-    <thead>
-    <tr>
-        <td>会议室</td>
-        {% for foo in time %}
-            <td head='{{ forloop.counter }}'>{{ foo.title }}</td>
-        {% endfor %}
-    </tr>
-    </thead>
-    <tbody>
-    {% for foo in talkrooms %}
-        <tr>
-            <td>{{ foo.title }}</td>
-        {% for ti in time %}
-            {% for ot in order_time %}
-                    {% if ot.talkroom__id == foo.id and ti.title == ot.time %}
-                        <td class="td" inhead="0">{{ ot.user__name }}</td>
-                    {% endif %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-2 text-center">
+            <div class="h1">你好：<div class="h2" style="display: inline-block">{{ user.user }}</div></div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-9 col-md-offset-1">
+            <div>
+            {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" disabled value="日期:">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" class="form-control" id="date">
+                    </div>
+                    <div class="col-md-1">
+                      <input type="button" id="button" class="btn btn-primary" style="display: inline-block" value="提交">
+                    </div>
+                </div>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <td>会议室</td>
+                {% for foo in time %}
+                    <td class="active" head='{{ forloop.counter }}'>{{ foo.title }}</td>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for foo in talkrooms %}
+                <tr>
+                    <td class="info">{{ foo.title }}</td>
+                    {% for ti in time %}
+                        {% for ot in order_time %}
+                            {% if ot.talkroom__id == foo.id and ti.title == ot.time %}
+                                <td class="td" inhead="0">{{ ot.user__name }}</td>
+                            {% endif %}
+                        {% endfor %}
+                        <td inhead="{{ forloop.counter }}">空</td>
+                    {% endfor %}
+                </tr>
             {% endfor %}
-            <td inhead="{{ forloop.counter }}">空</td>
-        {% endfor %}
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+            </tbody>
+        </table>
+        </div>
+
+    </div>
+</div>
 <div class="hide" data="" id="data"></div>
 
 <!--选择日期-->
@@ -67,21 +91,20 @@
         console.log($(this).val())
     })
 </script>
-
 <!--默认今天-->
 <script>
-    var now=new Date();
+    var now = new Date();
     var day = ("0" + now.getDate()).slice(-2);
     var month = ("0" + (now.getMonth() + 1)).slice(-2);
-    var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
-    $("#date").attr('value',today);
-{#    console.log(today)#}
+    var today = now.getFullYear() + "-" + (month) + "-" + (day);
+    $("#date").attr('value', today);
+    {#    console.log(today)#}
 </script>
 <!--选择日期后-->
 <script>
     //27
     var html = location.href;
-    if (html.length> 27){
+    if (html.length > 27) {
         var date = html.slice(-10);
         $('#date').val(date)
     }
@@ -92,31 +115,33 @@
         $(this).next().remove()
     })
 </script>
-<!---->
+<!--整理inhead额外属性添加-->
 <script>
     $('tbody td').each(function () {
-{#        console.log($(this).html());#}
-                if($(this).hasClass('td')){
-                    console.log($(this).next().attr('inhead'));
-                    if($(this).next().attr('inhead') === '2'){
-                        $(this).attr('inhead','1')
-                    }
-                    else {
-                    $(this).attr('inhead',parseInt($(this).prev().attr('inhead'))+1)}
-                }})
+        {#        console.log($(this).html());#}
+        if ($(this).hasClass('td')) {
+            console.log($(this).next().attr('inhead'));
+            if ($(this).next().attr('inhead') === '2') {
+                $(this).attr('inhead', '1')
+            }
+            else {
+                $(this).attr('inhead', parseInt($(this).prev().attr('inhead')) + 1)
+            }
+        }
+    })
 </script>
 <!--点击变色选中-->
 <script>
-    $('td').on('click',function () {
-        if($('h2').html() === $(this).html() || $(this).html() === '空'){
-            if($(this).html() === '空'){
+    $('td').on('click', function () {
+        if ($('div>.h2').html() === $(this).html() || $(this).html() === '空') {
+            if ($(this).html() === '空') {
                 $(this).toggleClass('tdd');
                 $(this).siblings().removeClass('tdd');
                 $(this).parent().siblings().children().removeClass('tdd');
                 $(this).siblings().removeClass('ttd');
                 $(this).parent().siblings().children().removeClass('ttd')
             }
-            else{
+            else {
                 $(this).toggleClass('ttd');
                 $(this).siblings().removeClass('ttd');
                 $(this).parent().siblings().children().removeClass('ttd');
@@ -128,21 +153,23 @@
             var inhead = $(this).attr('inhead');
             var date = $('#date').val();
             $('thead td').each(function () {
-                if($(this).hasClass('td')){
+                if ($(this).hasClass('td')) {
                     console.log('td');
-                    $(this).attr('inhead',$(this).prev().attr('inhead'))
+                    $(this).attr('inhead', $(this).prev().attr('inhead'))
                 }
-{#                console.log($(this).attr('head'),inhead);#}
-                if($(this).attr('head') === inhead){
+                {#                console.log($(this).attr('head'),inhead);#}
+                if ($(this).attr('head') === inhead) {
 
-                    time=$(this).html();
-{#                    console.log(time)#}
+                    time = $(this).html();
+                    {#                    console.log(time)#}
                 }
             });
-            var data = {'talkroom':$(this).parent().children().html(),
-                        'time':time,'date':date,'user':$('h2').html()};
-            $('#data').attr('data',JSON.stringify(data));
-            console.log(data['talkroom'],data['time'],data['date'],data['user'])
+            var data = {
+                'talkroom': $(this).parent().children().html(),
+                'time': time, 'date': date, 'user': $('div>.h2').html()
+            };
+            $('#data').attr('data', JSON.stringify(data));
+            //console.log(data['talkroom'], data['time'], data['date'], data['user'])
         }
         else {
             alert('无权更改他人预定')
@@ -153,14 +180,14 @@
 <script>
     $('#date').change(function () {
         $.ajax({
-            url:'/main/',
-            type:'get',
-            data:{
-                'date':$('#date').val()
+            url: '/main/',
+            type: 'get',
+            data: {
+                'date': $('#date').val()
             },
-            success:function (data) {
+            success: function (data) {
                 console.log(data);
-                location.href=data
+                location.href = data
             }
         })
     })
@@ -169,14 +196,14 @@
 <script>
     $('#button').click(function () {
         $.ajax({
-            url:'/main/',
-            type:'post',
-            headers:{"X-CSRFToken":$.cookie('csrftoken')},
-            data:JSON.stringify($('#data').attr('data')),
-            contentType:'json',
-            success:function (data) {
-{#                console.log(data);#}
-                location.href=data
+            url: '/main/',
+            type: 'post',
+            headers: {"X-CSRFToken": $.cookie('csrftoken')},
+            data: JSON.stringify($('#data').attr('data')),
+            contentType: 'json',
+            success: function (data) {
+                {#                console.log(data);#}
+                location.href = data
             }
 
         })

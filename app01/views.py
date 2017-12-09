@@ -32,20 +32,24 @@ def index(request,date=None):
             data_json = request.body
             data = eval(json.loads(data_json))
             '''{"talkroom":"马尔代夫","time":"13:00","date":"2017-12-07","user":"egon"}'''
-            # print(type(eval(data)))
+            # print(data)
+            if data.get('date'):
             #是否有此用户没有添加，有就删除
-            room_user = models.Date.objects.filter(date=data['date'],time=data['time'],
-                                                   talkroom__title=data['talkroom'],
-                                                   user__name=data['user'])
-            if room_user:
-                room_user.delete()
-            else:
-                talkroom = models.TalkRoom.objects.filter(title=data['talkroom']).first()
-                user = models.User.objects.filter(name=data['user']).first()
-                new_date = models.Date.objects.create(date=data['date'],time=data['time'])
-                new_date.talkroom.add(talkroom)
-                new_date.user.add(user)
-            return HttpResponse('/main/')
+                room_user = models.Date.objects.filter(date=data['date'],time=data['time'],
+                                                       talkroom__title=data['talkroom'],
+                                                       user__name=data['user'])
+
+                if room_user:
+                    room_user.delete()
+                else:
+                    talkroom = models.TalkRoom.objects.filter(title=data['talkroom']).first()
+                    user = models.User.objects.filter(name=data['user']).first()
+                    new_date = models.Date.objects.create(date=data['date'],time=data['time'])
+                    new_date.talkroom.add(talkroom)
+                    new_date.user.add(user)
+                return HttpResponse('/main/')
+            else:return HttpResponse('/main/')
+
     if request.method == 'GET':
         user_status = request.session.get('user')
         time = models.Time.objects.all()
