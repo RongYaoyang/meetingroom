@@ -77,3 +77,12 @@ def user(request, user=None):
             return HttpResponse('<h1>404 NOT FOUND</h1>')
     else:
         return HttpResponse('<h1>404 NOT FOUND</h1>')
+
+
+#ajax跨域请求
+# def ajax_response(request):
+#     if request.method == 'GET':
+#         callback = request.GET.get('callbacks')
+#         print(callback)
+#         return HttpResponse("%s('%s')"%(callback,json.dumps('ok')))
+    # return render(request, 'ajax_response.html')

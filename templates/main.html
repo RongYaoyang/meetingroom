@@ -28,10 +28,32 @@
         .ttd {
             background-color: #4cae4c;
         }
+
+        .loading{
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+            background: url("/static/loading_img/3.gif") no-repeat center;
+        }
+        .shade{
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1040;
+            background-color: #5e5e5e;
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
 <div class="container">
+    <div class="shade hide"></div>
+    <div class="loading hide"></div>
     <div class="row">
         <div class="col-md-6 col-md-offset-2 text-center">
             <div class="h1">你好：<div class="h2" style="display: inline-block">{{ user.user }}</div></div>
@@ -179,6 +201,8 @@
 <!--ajax改变日期时显示当前日期预定信息-->
 <script>
     $('#date').change(function () {
+        $('.loading').removeClass('hide');
+        $('.shade').removeClass('hide');
         $.ajax({
             url: '/main/',
             type: 'get',
@@ -188,6 +212,10 @@
             success: function (data) {
                 console.log(data);
                 location.href = data
+            },
+            error:function () {
+                $('.loading').removeClass('hide');
+                $('.shade').removeClass('hide');
             }
         })
     })

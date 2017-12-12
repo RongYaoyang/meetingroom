@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'^login/', views.login),
     url(r'^main/(.*)', views.index),
     url(r'^user/(\w*)', views.user),
+    url(r'^ajax_response/', views.ajax_response),
 ]

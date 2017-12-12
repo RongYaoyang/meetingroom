@@ -1,5 +1,4 @@
 from django.db import models
-
 # Create your models here.
 
 
@@ -23,6 +22,12 @@ class Date(models.Model):
     time = models.CharField(max_length=32,verbose_name='开会时间小时表示')
     talkroom = models.ManyToManyField(to='TalkRoom',verbose_name='预定会议室',related_name='date_talkroom')
     user = models.ManyToManyField(to='User', verbose_name='预定用户', related_name='user_date')
+
+    '''
+    talkroom = models.ForeignField(to='TalkRoom',verbose_name='预定会议室',related_name='date_talkroom')
+    user = models.ForeignField(to='User', verbose_name='预定用户', related_name='user_date')
+    最好一对多，做了多对多在前端要判断
+    '''
 
     def __str__(self):
         return self.date + self.time
